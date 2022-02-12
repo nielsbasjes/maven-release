@@ -201,6 +201,14 @@ public class BranchReleaseMojo
     private String projectVersionPolicyId;
 
     /**
+     * Optional config for the VersionPolicy implementation used to calculate the project versions.
+     *
+     * @since 3.0.0-M6
+     */
+    @Parameter( property = "projectVersionPolicyConfig" )
+    private String projectVersionPolicyConfig;
+
+    /**
      * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}
      * implementation used to calculate the project names.
      *
@@ -260,6 +268,7 @@ public class BranchReleaseMojo
         config.setDefaultDevelopmentVersion( developmentVersion );
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeBranch );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
+        config.setProjectVersionPolicyConfig( projectVersionPolicyConfig );
         config.setProjectNamingPolicyId( projectBranchNamingPolicyId );
         config.setScmBranchCommitComment( scmBranchCommitComment );
         config.setPinExternals( pinExternals );

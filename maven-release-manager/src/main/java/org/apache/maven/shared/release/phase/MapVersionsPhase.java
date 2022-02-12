@@ -27,6 +27,11 @@ import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.manager.NoSuchScmProviderException;
+import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -34,8 +39,11 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.apache.maven.shared.release.versions.VersionParseException;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.codehaus.plexus.util.StringUtils;
@@ -67,10 +75,17 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author Robert Scholte
  */
+@Component( role = ReleasePhase.class, hint = "map-release-versions" )
 public class MapVersionsPhase
     extends AbstractReleasePhase
 {
     private ResourceBundle resourceBundle;
+
+    /**
+     * Tool that gets a configured SCM repository from release configuration.
+     */
+    @Requirement
+    private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /**
      * Whether to convert to a snapshot or a release.
@@ -261,14 +276,14 @@ public class MapVersionsPhase
                         try
                         {
                             suggestedVersion =
-                                resolveSuggestedVersion( baseVersion, releaseDescriptor.getProjectVersionPolicyId() );
+                                resolveSuggestedVersion( baseVersion, releaseDescriptor );
                         }
                         catch ( VersionParseException e )
                         {
                             if ( releaseDescriptor.isInteractive() )
                             {
                                 suggestedVersion =
-                                    resolveSuggestedVersion( "1.0", releaseDescriptor.getProjectVersionPolicyId() );
+                                    resolveSuggestedVersion( "1.0", releaseDescriptor );
                             }
                             else
                             {
@@ -316,9 +331,10 @@ public class MapVersionsPhase
         return nextVersion;
     }
 
-    private String resolveSuggestedVersion( String baseVersion, String policyId )
+    private String resolveSuggestedVersion( String baseVersion, ReleaseDescriptor releaseDescriptor )
         throws PolicyException, VersionParseException
     {
+        String policyId = releaseDescriptor.getProjectVersionPolicyId();
         VersionPolicy policy = versionPolicies.get( policyId );
         if ( policy == null )
         {
@@ -326,6 +342,29 @@ public class MapVersionsPhase
         }
 
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion( baseVersion );
+
+        request.setConfig( releaseDescriptor.getProjectVersionPolicyConfig() );
+        request.setBasedir( releaseDescriptor.getWorkingDirectory() );
+
+        if ( scmRepositoryConfigurator != null )
+        {
+            try
+            {
+                ScmRepository repository = scmRepositoryConfigurator
+                        .getConfiguredRepository( releaseDescriptor, new Settings() );
+
+                ScmProvider provider = scmRepositoryConfigurator
+                        .getRepositoryProvider( repository );
+
+                request.setScmRepository( repository );
+                request.setScmProvider( provider );
+            }
+            catch ( ScmRepositoryException | NoSuchScmProviderException e )
+            {
+                getLogger().warn( "Next Version will NOT be based on the version control: " + e.getMessage() );
+            }
+        }
+
         return convertToSnapshot ? policy.getDevelopmentVersion( request ).getVersion()
                         : policy.getReleaseVersion( request ).getVersion();
     }

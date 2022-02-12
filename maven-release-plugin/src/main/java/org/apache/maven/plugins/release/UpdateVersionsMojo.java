@@ -93,6 +93,14 @@ public class UpdateVersionsMojo
     @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
     private String projectVersionPolicyId;
 
+    /**
+     * Optional config for the VersionPolicy implementation used to calculate the project versions.
+     *
+     * @since 3.0.0-M6
+     */
+    @Parameter( property = "projectVersionPolicyConfig" )
+    private String projectVersionPolicyConfig;
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -104,6 +112,7 @@ public class UpdateVersionsMojo
         config.setScmUseEditMode( useEditMode );
         config.setUpdateDependencies( updateDependencies );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
+        config.setProjectVersionPolicyConfig( projectVersionPolicyConfig );
 
         config.addOriginalScmInfo( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
                                    project.getScm() );

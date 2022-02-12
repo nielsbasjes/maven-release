@@ -94,7 +94,13 @@
       <version>3.0.0-M6-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
-    
+    <dependency>
+      <groupId>org.apache.maven.release</groupId>
+      <artifactId>maven-release-ccsemver-policy</artifactId>
+      <version>3.0.0-M6-SNAPSHOT</version>
+      <optional>true</optional>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -223,16 +229,17 @@
                 <setupInclude>setup/*/pom.xml</setupInclude>
               </setupIncludes>
               <pomIncludes>
-                <pomInclude>projects/prepare/*/*pom.xml</pomInclude>
-                <pomInclude>projects/prepare/flat-multi-module/parent-project/pom.xml</pomInclude>
-                <pomInclude>projects/prepare-with-pom/*/*pom.xml</pomInclude>
-                <pomInclude>projects/branch/*/pom.xml</pomInclude>
-                <pomInclude>projects/perform/*/pom.xml</pomInclude>
-                <pomInclude>projects/update-versions/*/pom.xml</pomInclude>
+                <pomInclude>projects/prepare/ccsemver-*/*pom.xml</pomInclude>
+<!--                <pomInclude>projects/prepare/*/*pom.xml</pomInclude>-->
+<!--                <pomInclude>projects/prepare/flat-multi-module/parent-project/pom.xml</pomInclude>-->
+<!--                <pomInclude>projects/prepare-with-pom/*/*pom.xml</pomInclude>-->
+<!--                <pomInclude>projects/branch/*/pom.xml</pomInclude>-->
+<!--                <pomInclude>projects/perform/*/pom.xml</pomInclude>-->
+<!--                <pomInclude>projects/update-versions/*/pom.xml</pomInclude>-->
               </pomIncludes>
-              <pomExcludes>
-                <pomExclude>projects/prepare/MRELEASE-966/pom.xml</pomExclude>
-              </pomExcludes>
+<!--              <pomExcludes>-->
+<!--                <pomExclude>projects/prepare/MRELEASE-966/pom.xml</pomExclude>-->
+<!--              </pomExcludes>-->
               <properties>
                 <allowReleasePluginSnapshot>true</allowReleasePluginSnapshot>
                 <maven.compiler.source>${maven.compiler.source}</maven.compiler.source>

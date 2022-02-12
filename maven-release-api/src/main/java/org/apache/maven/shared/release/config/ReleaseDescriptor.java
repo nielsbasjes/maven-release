@@ -418,6 +418,13 @@ public interface ReleaseDescriptor
     String getProjectVersionPolicyId();
 
     /**
+     * Get the (optional) config for the VersionPolicy implementation used to calculate the project versions.
+     *
+     * @return String
+     */
+    String getProjectVersionPolicyConfig();
+
+    /**
      * Get the role-hint for the release Strategy implementation.
      *
      * @return String

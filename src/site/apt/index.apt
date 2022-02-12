@@ -42,6 +42,8 @@ Maven Release
 *----------------------------------------------------------+----------------+
 | {{{./maven-release-policies/maven-release-semver-policy/}maven-release-semver-policy}} | a version policy that enforce SemVer format and upgrades minor element for next development version
 *----------------------------------------------------------+----------------+
+| {{{./maven-release-policies/maven-release-ccsemver-policy/}maven-release-ccsemver-policy}} | a version policy that enforce SemVer format and upgrades major/minor/patch element for next development version depending on the commit messages since the previous release (actually tag in the SCM).
+*----------------------------------------------------------+----------------+
 
 Notes for Developers
 

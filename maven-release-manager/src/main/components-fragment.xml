@@ -109,6 +109,10 @@
           <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
           <field-name>versionPolicies</field-name>
         </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+          <field-name>scmRepositoryConfigurator</field-name>
+        </requirement>
       </requirements>
     </component>
     <component>
@@ -126,6 +130,10 @@
         <requirement>
           <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
           <field-name>versionPolicies</field-name>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+          <field-name>scmRepositoryConfigurator</field-name>
         </requirement>
       </requirements>
     </component>
@@ -145,6 +153,10 @@
         <requirement>
           <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
           <field-name>versionPolicies</field-name>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+          <field-name>scmRepositoryConfigurator</field-name>
         </requirement>
       </requirements>
     </component>

@@ -53,6 +53,10 @@
       <artifactId>maven-settings</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.aether</groupId>
       <artifactId>aether-util</artifactId>
       <version>1.0.0.v20140518</version>

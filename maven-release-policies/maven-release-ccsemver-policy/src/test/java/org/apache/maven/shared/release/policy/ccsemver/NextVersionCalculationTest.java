@@ -96,7 +96,7 @@ public class NextVersionCalculationTest
         String suggestedVersion = versionPolicy.getDevelopmentVersion( new VersionPolicyRequest().setVersion( "1.0.0" ) )
                                                .getVersion();
 
-        assertEquals( "1.1.0-SNAPSHOT", suggestedVersion );
+        assertEquals( "1.0.1-SNAPSHOT", suggestedVersion );
     }
 
     public void verifyNextVersion(VersionRules versionRules,

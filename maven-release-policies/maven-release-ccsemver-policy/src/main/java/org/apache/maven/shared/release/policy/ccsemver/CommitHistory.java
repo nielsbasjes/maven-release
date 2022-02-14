@@ -157,7 +157,7 @@ public class CommitHistory
                     addChanges( changeSet.getComment() );
                 }
             }
-            if ( changeLog.getChangeLog().getChangeSets().size() <= limit )
+            if ( changeLog.getChangeLog().getChangeSets().size() < limit )
             {
                 // Apparently there are simply no more commits.
                 break;

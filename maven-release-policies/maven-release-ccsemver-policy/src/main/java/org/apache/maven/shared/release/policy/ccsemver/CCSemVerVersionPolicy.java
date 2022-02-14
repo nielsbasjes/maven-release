@@ -188,7 +188,7 @@ public class CCSemVerVersionPolicy implements VersionPolicy, LogEnabled
             throw new VersionParseException( e.getMessage() );
         }
         
-        version = version.next( Element.MINOR );  
+        version = version.next( Element.PATCH );
         VersionPolicyResult result = new VersionPolicyResult();
         result.setVersion( version + "-SNAPSHOT" );
         return result;

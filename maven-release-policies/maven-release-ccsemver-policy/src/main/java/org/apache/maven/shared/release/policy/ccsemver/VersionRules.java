@@ -21,6 +21,9 @@ package org.apache.maven.shared.release.policy.ccsemver;
 
 import org.apache.maven.shared.release.policy.ccsemver.config.CCSemverConfig;
 import org.apache.maven.shared.release.policy.ccsemver.config.io.xpp3.CCSemverConfigXpp3Reader;
+import org.codehaus.plexus.logging.LogEnabled;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.semver.Version;
 
@@ -32,12 +35,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.codehaus.plexus.logging.Logger.LEVEL_DEBUG;
 
 /**
  * Something
  */
-public class VersionRules
+public class VersionRules implements LogEnabled
 {
+    // Default logger in case none was set.
+    // In normal runs this is overruled, in testing it is not.
+    protected Logger logger = new ConsoleLogger( LEVEL_DEBUG, "debug" );
+
+    @Override
+    public void enableLogging( Logger logger )
+    {
+        this.logger = logger;
+    }
+
     private final Pattern tagPattern;
 
     private final List<Pattern> majorUpdatePatterns = new ArrayList<>();
@@ -71,10 +85,12 @@ public class VersionRules
 
                 if ( !semverConfig.getMajorRules().isEmpty() || !semverConfig.getMinorRules().isEmpty() )
                 {
+                    majorUpdatePatterns.clear();
                     for ( String majorRule : semverConfig.getMajorRules() )
                     {
                         majorUpdatePatterns.add( Pattern.compile( majorRule, patternFlags ) );
                     }
+                    minorUpdatePatterns.clear();
                     for ( String minorRule : semverConfig.getMinorRules() )
                     {
                         minorUpdatePatterns.add( Pattern.compile( minorRule, patternFlags ) );
@@ -96,11 +112,13 @@ public class VersionRules
         {
             if ( isMajorUpdate( change ) )
             {
+                logger.debug( "MAJOR: \"" + change + "\"" );
                 return Version.Element.MAJOR;
             }
             else
             if ( isMinorUpdate( change ) )
             {
+                logger.debug( "MINOR: \"" + change + "\"" );
                 needMinorUpdate = true;
             }
         }
@@ -111,6 +129,7 @@ public class VersionRules
         }
         if ( commitHistory.getLastVersionTag() != null )
         {
+            logger.debug( "PATCH: Tag " + commitHistory.getLastVersionTag() );
             return Version.Element.PATCH;
         }
         return null;
@@ -148,22 +167,19 @@ public class VersionRules
     public String toString() 
     {
         StringBuilder result = new StringBuilder();
-        result.append( "<cCSemverConfig>" );
-        result.append( "<versionTag>" ).append( tagPattern ).append( "</versionTag>" );
-        result.append( "<majorRules>" );
+        result.append( "Conventional Commits config:\n" );
+        result.append( "  VersionTag:\n" );
+        result.append( "    >>>" ).append( tagPattern ).append( "<<<\n" );
+        result.append( "  MajorRules:\n" );
         for ( Pattern majorUpdatePattern : majorUpdatePatterns ) 
         {
-            result.append( "<majorRule>" ).append( majorUpdatePattern ).append( "</majorRule>" );
+            result.append( "    >>>" ).append( majorUpdatePattern ).append( "<<<\n" );
         }
-        result.append( "</majorRules>" );
-
-        result.append( "<minorRules>" );
+        result.append( "  Minor Rules:\n" );
         for ( Pattern minorUpdatePattern : minorUpdatePatterns )
         {
-            result.append( "<minorRule>" ).append( minorUpdatePattern ).append( "</minorRule>" );
+            result.append( "    >>>" ).append( minorUpdatePattern ).append( "<<<\n" );
         }
-        result.append( "</minorRules>" );
-        result.append( "</cCSemverConfig>" );
         return result.toString();
     }
 }

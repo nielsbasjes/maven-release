@@ -19,7 +19,6 @@ package org.apache.maven.shared.release.policy.ccsemver;
  * under the License.
  */
 
-
 import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -44,6 +43,7 @@ public class CommitHistory
 {
     private final List<String> changes = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
+    private String string;
 
     public List<String> getChanges()
     {
@@ -90,11 +90,14 @@ public class CommitHistory
         return tags.get( 0 );
     }
 
-    public static CommitHistory getHistory( VersionPolicyRequest request, VersionRules versionRules )
+    public CommitHistory()
+    {
+        // Default constructor which results in an empty history.
+    }
+
+    public CommitHistory( VersionPolicyRequest request, VersionRules versionRules )
             throws ScmException, VersionParseException
     {
-        CommitHistory commitHistory = new CommitHistory();
-
         ScmRepository scmRepository = request.getScmRepository();
         ScmProvider scmProvider = request.getScmProvider();
 
@@ -103,19 +106,25 @@ public class CommitHistory
                 new ScmFileSet( new File( request.getWorkingDirectory() ) )
         );
 
+        List<String> logLines = new ArrayList<>();
+
         int limit = 0;
-        while ( commitHistory.getTags().isEmpty() )
+        while ( getTags().isEmpty() )
         {
             limit += 10;
             changeLogRequest.setLimit( null );
             changeLogRequest.setLimit( limit );
-            commitHistory.changes.clear();
+            changes.clear();
 
             ChangeLogScmResult changeLog = scmProvider.changeLog( changeLogRequest );
 
+            logLines.clear();
+            logLines.add( "Commit history:" );
             for ( ChangeSet changeSet : changeLog.getChangeLog().getChangeSets() )
             {
                 List<String> changeSetTags = changeSet.getTags();
+                logLines.add(  "-- Comment: \"" + changeSet.getComment() + "\"" );
+                logLines.add(  "   Tags   : " + changeSetTags );
                 List<String> versionTags = changeSetTags
                         .stream()
                         .map( tag ->
@@ -139,12 +148,13 @@ public class CommitHistory
                         throw new VersionParseException( "Most recent commit with tags has multiple version tags: "
                                 + versionTags );
                     }
-                    commitHistory.addTags( versionTags );
+                    logLines.add( "-- Version tags: " + versionTags );
+                    addTags( versionTags );
                     break; // We have the last version tag
                 }
                 else
                 {
-                    commitHistory.addChanges( changeSet.getComment() );
+                    addChanges( changeSet.getComment() );
                 }
             }
             if ( changeLog.getChangeLog().getChangeSets().size() <= limit )
@@ -153,7 +163,18 @@ public class CommitHistory
                 break;
             }
         }
-        return commitHistory;
+
+        StringBuilder sb = new StringBuilder();
+        for ( String logLine: logLines )
+        {
+            sb.append( logLine ).append( '\n' );
+        }
+        string = sb.toString();
     }
 
+    @Override
+    public String toString()
+    {
+        return string;
+    }
 }

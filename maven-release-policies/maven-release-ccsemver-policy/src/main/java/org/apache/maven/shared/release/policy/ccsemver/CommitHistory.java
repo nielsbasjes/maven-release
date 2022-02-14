@@ -111,7 +111,7 @@ public class CommitHistory
         int limit = 0;
         while ( getTags().isEmpty() )
         {
-            limit += 10;
+            limit += 100; // Read the repository in incremental steps of 100
             changeLogRequest.setLimit( null );
             changeLogRequest.setLimit( limit );
             changes.clear();

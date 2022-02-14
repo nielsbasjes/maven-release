@@ -142,17 +142,9 @@ public class CCSemVerVersionPolicy implements VersionPolicy, LogEnabled
 
         if ( usingTag )
         {
-            if ( maxElementSinceLastVersionTag == null )
-            {
-                logger.info( "From SCM tag with version " + versionString
-                        + " doing a PATCH version increase to version " + releaseVersion );
-            }
-            else
-            {
-                logger.info( "From SCM tag with version " + versionString
-                        + " doing a " + maxElementSinceLastVersionTag
-                        + " version increase based on commit messages to version " + releaseVersion );
-            }
+            logger.info( "From SCM tag with version " + versionString
+                    + " doing a " + maxElementSinceLastVersionTag
+                    + " version increase based on commit messages to version " + releaseVersion );
         }
         else
         {

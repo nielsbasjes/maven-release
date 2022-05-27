@@ -89,7 +89,7 @@
   <properties>
     <scmVersion>1.12.2</scmVersion>
     <javaVersion>8</javaVersion>
-    <mavenVersion>3.0</mavenVersion>
+    <mavenVersion>3.8.5</mavenVersion>
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
     <project.build.outputTimestamp>2022-01-02T10:18:49Z</project.build.outputTimestamp>
   </properties>
